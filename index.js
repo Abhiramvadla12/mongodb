@@ -21,9 +21,9 @@ const operatorSchema = new mongoose.Schema({
     age: Number,
     gender: String,
     email: String
-});
+},{"strict":false});
 
-const operatorModel = mongoose.model("operators", operatorSchema);
+const operatorModel = mongoose.model("operators", operatorSchema); 
 
 // GET Route for Operators
 app.get("/operators", async (req, res) => {
@@ -99,6 +99,41 @@ app.post("/marustunna",async(req,res)=>{
     }
     
 
+})
+
+//updating using put 
+
+app.put("/operators/:name",async(req,res)=>{
+        console.log(req.params);
+        console.log(req.body);
+        let result = await operatorModel.updateOne({
+           "name": req.params.name
+        },req.body);
+        if(result){
+            res.send("data updated successfully !!!");
+        }
+        else{
+            res.send("unable to update the data ");
+        }
+})
+
+//delete api :
+const userSchema = new mongoose.Schema({
+    nam: String
+})
+
+const userModel = mongoose.model("users",userSchema)
+app.delete("/users/:peru",async(req,res)=>{
+    console.log(req.params);
+    let result = await userModel.deleteOne({
+       "name": req.params.peru
+    });
+    if(result.deletedCount > 0){
+        res.send("data deleted successfully !!!");
+    }
+    else{
+        res.send("unable to delete the data ");
+    }
 })
 // Start Server
 app.listen(port, () => {
