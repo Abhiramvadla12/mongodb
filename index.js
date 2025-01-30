@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const dbConnect = require("./dbConnect");
+const {dbConnect} = require("./dbConnect");
 require("dotenv").config(); // Load .env variables
 
 const app = express();
