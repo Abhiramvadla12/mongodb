@@ -81,7 +81,7 @@ app.get("/marustunna", async (req, res) => {
 //     }
 // });
 
-app.post("/marustunna",async(req,res)=>{
+app.post("/marustunna_post",async(req,res)=>{
     try{
         const data=req.body;
         console.log(data);
