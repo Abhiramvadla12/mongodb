@@ -1,10 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const {dbConnect} = require("./dbConnect");
-require("dotenv").config(); // Load .env variables
+const dbConnect = require("./db");
+require("dotenv").config();
 
 const app = express();
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3002;
 
 app.use(express.json());
 
@@ -21,11 +21,11 @@ const operatorSchema = new mongoose.Schema({
     age: Number,
     gender: String,
     email: String
-}, { "strict": false });
+},{"strict":false});
 
-const operatorModel = mongoose.model("operators", operatorSchema);
+const operatorModel = mongoose.model("operators", operatorSchema); 
 
-// ✅ GET Route for Operators
+// GET Route for Operators
 app.get("/operators", async (req, res) => {
     try {
         let data = await operatorModel.find();
@@ -37,7 +37,7 @@ app.get("/operators", async (req, res) => {
     }
 });
 
-// ✅ Define Schema & Model for "marustunna"
+// Define Schema & Model for marustunna
 const marstunnaSchema = new mongoose.Schema({
     name: String,
     age: Number,
@@ -47,7 +47,7 @@ const marstunnaSchema = new mongoose.Schema({
 
 const marstunnaModel = mongoose.model("marustunna", marstunnaSchema, "marustunna");
 
-// ✅ GET Route for "marustunna"
+// ✅ GET Route for marustunna
 app.get("/marustunna", async (req, res) => {
     try {
         let data = await marstunnaModel.find();
@@ -59,61 +59,83 @@ app.get("/marustunna", async (req, res) => {
     }
 });
 
-// ✅ POST Route for "marustunna"
-app.post("/marustunna", async (req, res) => {
-    try {
-        const data = req.body;
+// // ✅ Fixed POST Route for marustunna
+// app.post("/marustunna", async (req, res) => {
+//     console.log(req.body);
+//     try {
+//         const newUser = new marstunnaModel({
+//             name: req.body.name,
+//             age: req.body.age,
+//             gender: req.body.gender,
+//             email: req.body.email
+//         });
+
+//         await newUser.save();
+//         res.send({
+//             message: "✅ Data inserted successfully into marustunna",
+//             user: newUser
+//         });
+//     } catch (error) {
+//         console.error("❌ Error inserting data into marustunna:", error);
+//         res.status(500).send({ error: "Internal Server Error" });
+//     }
+// });
+
+app.post("/marustunna",async(req,res)=>{
+    try{
+        const data=req.body;
         console.log(data);
-        let post = await marstunnaModel.create(data);
+        let post=await marstunnaModel.create(data)
         res.send({
             message: "✅ Data inserted successfully into marustunna",
             user: post
         });
-    } catch (error) {
+
+
+    }
+    catch (error) {
         console.error("❌ Error inserting data into marustunna:", error);
         res.status(500).send({ error: "Internal Server Error" });
     }
-});
+    
 
-// ✅ PUT Route to update "operators"
-app.put("/operators/:name", async (req, res) => {
-    try {
+})
+
+//updating using put 
+
+app.put("/operators/:name",async(req,res)=>{
         console.log(req.params);
         console.log(req.body);
-        let result = await operatorModel.updateOne({ "name": req.params.name }, req.body);
-        
-        if (result.modifiedCount > 0) {
-            res.send("✅ Data updated successfully!");
-        } else {
-            res.send("⚠️ No matching data found to update.");
+        let result = await operatorModel.updateOne({
+           "name": req.params.name
+        },req.body);
+        if(result){
+            res.send("data updated successfully !!!");
         }
-    } catch (error) {
-        console.error("❌ Error updating data:", error);
-        res.status(500).send({ error: "Internal Server Error" });
-    }
-});
-
-// ✅ DELETE API for "users"
-const userSchema = new mongoose.Schema({ name: String });
-const userModel = mongoose.model("users", userSchema);
-
-app.delete("/users/:name", async (req, res) => {
-    try {
-        console.log(req.params);
-        let result = await userModel.deleteOne({ "name": req.params.name });
-
-        if (result.deletedCount > 0) {
-            res.send("✅ Data deleted successfully!");
-        } else {
-            res.send("⚠️ Unable to find the data to delete.");
+        else{
+            res.send("unable to update the data ");
         }
-    } catch (error) {
-        console.error("❌ Error deleting data:", error);
-        res.status(500).send({ error: "Internal Server Error" });
-    }
-});
+})
 
-// ✅ Start Server
+//delete api :
+const userSchema = new mongoose.Schema({
+    nam: String
+})
+
+const userModel = mongoose.model("users",userSchema)
+app.delete("/users/:peru",async(req,res)=>{
+    console.log(req.params);
+    let result = await userModel.deleteOne({
+       "name": req.params.peru
+    });
+    if(result.deletedCount > 0){
+        res.send("data deleted successfully !!!");
+    }
+    else{
+        res.send("unable to delete the data ");
+    }
+})
+// Start Server
 app.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
 });
